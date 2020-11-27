@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Chatアプリ</title>
+  <style>
+    /* この中にcssをかけます */
+  </style>
+</head>
+
+<body>
+  <!-- ブラウザの画面に見える内容 -->
+
+  <div>
+    <!-- 名前 -->
+    名前
+    <input type="text" id="username">
+  </div>
+  <div>
+    <!-- テキストエリア -->
+    テキスト
+    <textarea name="" id="text" cols="30" rows="10"></textarea>
+  </div>
+
+  <div>
+    <!-- 送信ボタン -->
+    <button id="send">送信</button>
+  </div>
+
+  <div>
+    <!-- 保存されたデータが表示される箇所 -->
+    <div id="output"></div>
+  </div>　　　　
+
+  <!--/ ブラウザの画面に見える内容 -->
+
+  <!-- JQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <!--** 以下Firebase **-->
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <!-- ここにfirebaseのscriptを貼り付ける -->
+  <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase.js"></script>
+
+  <!-- <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script-->
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyDzeoLD6iKXOb8xKZSJgG4ugcA7i23moJI",
+    authDomain: "dev18-16.firebaseapp.com",
+    databaseURL: "https://dev18-16.firebaseio.com",
+    projectId: "dev18-16",
+    storageBucket: "dev18-16.appspot.com",
+    messagingSenderId: "1059985463787",
+    appId: "1:1059985463787:web:35e35f56edab8c1c09e1ae"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    //firebaseのデーターベース（保存させる場所）を使いますよと言うjsのコードを貼り付ける
+    // xxxxxスクリプトを貼り付ける
+    const newPostRef = firebase.database().ref();
+
+
+    // 保存された自分の名前を取得（読み込み時に通る処理）-------------------------------------------------追加-------------------------------
+    var myname = localStorage.getItem('chat-my-name');    
+    $("#username").val(myname);
+
+    // ここから下にjqueryの処理を書いて練習します
+    
+
+    // 送信ボタンをクリックされたら次の処理をする
+    $("#send").on("click", function () {
+
+      // データを登録で送る
+      newPostRef.push({
+        //名前
+          username:$("#username").val(),
+          text: $("#text").val(),
+        
+        //テキストエリア
+      
+      });
+
+      // 入力した名前をローカルストレージに保存（この名前を自分の名前とする）-----------------------追加------------------------
+      var myname = localStorage.getItem('chat-my-name');    
+      if(myname != $("#username").val()){
+          myname = $("#username").val();
+          localStorage.setItem('chat-my-name', myname); 
+          location.reload();//再読み込み
+      }
+      
+      
+      // 文字を空にする
+      $("#text").val(""); //空にする
+      //$("#username").val(""); //空にする
+      $("#username").val(myname);   //-----------------------変更------------------------
+      
+      
+    });
+    
+    // 受信処理
+    newPostRef.on("child_added", function (data) {
+    
+    
+      //ここに保存されたデータが全て入ってくる
+      let v = data.val();
+
+      // function (data)のdataにfirebaseのデータが入ってくる
+      //console.log(v.username);
+
+
+      //let k = data.key; //今回は使いません
+
+      //console.logで受信=firebaseに登録されている中身を確認しよう！
+      
+      //テンプレートリテラル `` を活用して変数にhtmlを埋め込もう！ 
+      
+      
+      //let str = `<p><b>${v.username}</b> : ${v.text}</p>`;//-----------------以下に修正-------
+      // 名前が保存した自分の名前なら赤字にする------------------------------------追加分--------------
+      let str = ``;
+      
+      console.log(myname);
+      console.log(v.username);
+      if(myname == v.username ){   // 取得した名前が保存してある自分の名前なら
+          str = `<div id="${data.key}"><p class="red"><b>${v.username}</b> : ${v.text} <button class="done">×</button></p></div>`;  //  赤字にする
+          console.log("red");
+      }else{
+          str = `<div id="${data.key}"><p>            <b>${v.username}</b> : ${v.text} <button class="done">×</button></p></div>`;
+      }
+      
+
+      // ここでデータをhtmlに埋め込む prependには変数を埋め込もう！
+      $("#output").prepend(str);
+    });
+
+
+    $("text").on("keydown", function (e) {
+      console.log(e, "event");
+      // eventの中身をconsole.logでみてみよう！
+
+      if (e.keyCode === 13) {
+        newPostRef.push({
+          username: $("#username").val(), //名前
+          text: $("#text").val(), //テキストエリア
+
+          
+        })
+        $("#text").val(""); //空にする
+        $("#username").val(""); //空にする
+        
+      }
+    })
+    
+    
+    // （おまけ）削除処理
+    $(document).on('click', '.done', (event) => {
+        const id = $(event.target).closest('div').attr('id');
+        firebase.database().ref(id).remove();
+    });
+
+    newPostRef.on("child_removed", (date) => {
+        $("#"+date.key).remove();
+    });
+
+
+    
+  </script>
+  
+  <style>
+  .red{
+    color:red;
+  }
+  </style>
+</body>
+
+</html>
