@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>アンケート</title>
+    </head>
+    
+    <body>
+        
+        アンケート記入フォーム<br>
+        
+        <form method="post" action="write.php">
+        
+            名前:<input type="text" name="name" required><br>
+            
+            メールアドレス:<input type="email" name="mailaddress"><br>
+            
+            好きな食べ物:
+            <input type="radio" name="food" value="和食"      >和食
+            <input type="radio" name="food" value="中華"      >中華
+            <input type="radio" name="food" value="フレンチ"  >フレンチ
+            <input type="radio" name="food" value="イタリアン">イタリアン
+            <input type="radio" name="food" value="それ以外"  >それ以外<br>
+
+            好きな音楽:
+            <input type="radio" name="music" value="JPOP"    >JPOP
+            <input type="radio" name="music" value="KPOP"    >KPOP
+            <input type="radio" name="music" value="ハウス"  >ハウス
+            <input type="radio" name="music" value="HipHop"  >HipHop
+            <input type="radio" name="music" value="ロック"  >ロック
+            <input type="radio" name="music" value="ソウル"  >ソウル
+            <input type="radio" name="music" value="アニソン">アニソン
+            <input type="radio" name="music" value="それ以外">それ以外<br>
+
+            好きな本:<input type="text" name="book" style="width:100px"><br>
+
+            行ってみたい国:<input type="text" name="country" style="width:100px"><br>
+
+            <input type="submit" value="送信">
+
+        </form>
+        
+        <!--  input全てにnameを設定しました  -->
+        <a href='read.php'>結果はこちら</a>
+
+    </body>
+</html>
+
+
+
